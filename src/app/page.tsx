@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingBag, Zap, Trophy } from "lucide-react";
+import { ShoppingBag, Zap, Trophy, X } from "lucide-react";
 
 const designs = {
   "Women's Swimwear": [
@@ -41,49 +41,67 @@ const designs = {
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("Women's Swimwear");
   const [selectedDesign, setSelectedDesign] = useState<any>(null);
+  const [compare, setCompare] = useState<any[]>([]);
+
+  const toggleCompare = (design: any) => {
+    const exists = compare.find((d) => d.id === design.id);
+    if (exists) {
+      setCompare(compare.filter((d) => d.id !== design.id));
+    } else {
+      setCompare([...compare, design]);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
-      <section className="bull-gradient py-20 px-6 text-center">
-        <h1 className="text-6xl font-black mb-4">⚔️ BULLFIT APPAREL</h1>
-        <p className="text-2xl text-gray-300 mb-2">Fortune Favors the Bulls</p>
-        <p className="text-lg text-gray-400 mb-8">Premium Gym & Swim Wear Collection</p>
-        <div className="flex justify-center gap-4">
+      <section className="bull-gradient py-24 px-6 text-center">
+        <h1 className="text-7xl font-black mb-4 tracking-tight">BULLFIT APPAREL</h1>
+        <p className="text-3xl text-red-400 font-bold mb-2">⚔️ FORTUNE FAVORS THE BULLS ⚔️</p>
+        <p className="text-xl text-gray-300 mb-8">AI-Designed Premium Gym & Swim Wear</p>
+        <p className="text-sm text-gray-400 mb-8 max-w-2xl mx-auto">
+          NO BULLSH*T, JUST DESIGNS. Explore 24 hand-crafted concepts from The Herd's favorite AI design lab.
+        </p>
+        <div className="flex justify-center gap-4 flex-wrap">
           <button className="px-8 py-3 bg-red-700 hover:bg-red-800 font-bold text-lg rounded transition">
             <ShoppingBag className="inline mr-2 w-5 h-5" />
-            Shop Now
-          </button>
-          <button className="px-8 py-3 border-2 border-red-700 hover:bg-red-700/20 font-bold text-lg rounded transition">
-            View Specs
+            Send to Manufacturer
           </button>
         </div>
       </section>
 
-      {/* Hero Products */}
-      <section className="bg-gray-900 py-16 px-6">
-        <h2 className="text-4xl font-black text-center mb-12">⭐ HERO PRODUCTS</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {[
-            { name: "The Stampede", cat: "Women's Swimwear", price: "$88-98" },
-            { name: "Iron Maiden", cat: "Women's Swimwear", price: "$95-115" },
-            { name: "Apex Bull", cat: "Men's Gym Shorts", price: "$58-72" },
-            { name: "Fortune Bull", cat: "Men's Swim Shorts", price: "$85-95" },
-          ].map((p) => (
-            <div key={p.name} className="p-6 bg-black border border-red-700 rounded hover-scale cursor-pointer">
-              <div className="text-4xl mb-3">🔥</div>
-              <h3 className="font-black text-lg mb-2">{p.name}</h3>
-              <p className="text-sm text-gray-400 mb-3">{p.cat}</p>
-              <p className="text-red-500 font-bold">{p.price}</p>
+      {/* Compare Section */}
+      {compare.length > 0 && (
+        <section className="bg-gray-950 py-12 px-6 border-b border-red-700/30">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-black">COMPARING {compare.length} DESIGNS</h2>
+              <button onClick={() => setCompare([])} className="text-gray-400 hover:text-white text-sm">
+                Clear All
+              </button>
             </div>
-          ))}
-        </div>
-      </section>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {compare.map((design) => (
+                <div key={design.id} className="p-4 bg-black border border-red-700 rounded relative">
+                  <button
+                    onClick={() => toggleCompare(design)}
+                    className="absolute top-2 right-2 bg-red-700 hover:bg-red-800 p-1 rounded"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <h4 className="font-bold text-sm mb-2">{design.name}</h4>
+                  <p className="text-xs text-gray-400">{design.price}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Design Browser */}
       <section className="py-16 px-6 bg-black">
         <h2 className="text-4xl font-black text-center mb-12">24 DESIGN COLLECTION</h2>
-        
+
         {/* Category Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-12">
           {Object.keys(designs).map((cat) => (
@@ -106,29 +124,49 @@ export default function Home() {
           {designs[activeCategory as keyof typeof designs].map((design: any) => (
             <div
               key={design.id}
-              onClick={() => setSelectedDesign(design)}
-              className={`p-6 rounded border-2 cursor-pointer hover-scale transition ${
+              className={`p-6 rounded border-2 cursor-pointer transition relative ${
                 design.hero
-                  ? "border-red-700 bg-red-900/20"
-                  : "border-gray-700 bg-gray-900"
+                  ? "border-red-700 bg-red-900/20 hover:bg-red-900/30"
+                  : "border-gray-700 bg-gray-900 hover:border-red-700/50"
               }`}
             >
               <div className="flex items-start justify-between mb-3">
-                <div>
+                <div className="flex-1">
                   <h3 className="font-black text-lg">{design.name}</h3>
                   <p className="text-xs text-gray-500">{design.id}</p>
                 </div>
-                {design.hero && <Trophy className="w-5 h-5 text-red-500" />}
+                {design.hero && <Trophy className="w-5 h-5 text-red-500 ml-2 flex-shrink-0" />}
               </div>
-              <p className="text-sm text-gray-300 mb-4">{design.desc}</p>
-              <p className="font-bold text-red-500">{design.price}</p>
+
+              <p className="text-sm text-gray-300 mb-4 line-clamp-2">{design.desc}</p>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSelectedDesign(design)}
+                  className="flex-1 px-3 py-2 bg-red-700 hover:bg-red-800 text-sm font-bold rounded transition"
+                >
+                  View Details
+                </button>
+                <button
+                  onClick={() => toggleCompare(design)}
+                  className={`flex-1 px-3 py-2 text-sm font-bold rounded transition ${
+                    compare.find((d) => d.id === design.id)
+                      ? "bg-gray-700 hover:bg-gray-600 text-white"
+                      : "border border-gray-700 hover:border-red-700 text-gray-300"
+                  }`}
+                >
+                  {compare.find((d) => d.id === design.id) ? "✓" : "+"}
+                </button>
+              </div>
+
+              <p className="font-bold text-red-500 text-sm mt-4">{design.price}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Strategy Section */}
-      <section className="py-16 px-6 bg-gray-900">
+      <section className="py-16 px-6 bg-gray-900 border-t border-red-700/30">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl font-black mb-8">THE STRATEGY</h2>
           <div className="space-y-6 text-lg text-gray-300">
@@ -171,20 +209,43 @@ export default function Home() {
       {/* Modal */}
       {selectedDesign && (
         <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-50"
+          className="fixed inset-0 bg-black/90 flex items-center justify-center p-6 z-50"
           onClick={() => setSelectedDesign(null)}
         >
           <div
-            className="bg-gray-900 p-8 rounded max-w-md w-full"
+            className="bg-gray-900 p-8 rounded max-w-lg w-full border border-red-700/30"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-black text-2xl mb-2">{selectedDesign.name}</h3>
-            <p className="text-gray-500 mb-4">{selectedDesign.id}</p>
-            <p className="text-gray-300 mb-6">{selectedDesign.desc}</p>
-            <p className="text-2xl font-bold text-red-500 mb-6">{selectedDesign.price}</p>
-            <button className="w-full px-6 py-3 bg-red-700 hover:bg-red-800 font-bold rounded transition">
-              Add to Cart
-            </button>
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="font-black text-3xl mb-1">{selectedDesign.name}</h3>
+                <p className="text-gray-500 text-sm">{selectedDesign.id}</p>
+              </div>
+              <button
+                onClick={() => setSelectedDesign(null)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <p className="text-gray-300 mb-4">{selectedDesign.desc}</p>
+            <p className="text-sm text-gray-400 mb-6">
+              Perfect for athletes who demand premium quality without the BS.
+            </p>
+            <p className="text-3xl font-bold text-red-500 mb-6">{selectedDesign.price}</p>
+
+            <div className="flex gap-3">
+              <button className="flex-1 px-6 py-3 bg-red-700 hover:bg-red-800 font-bold rounded transition">
+                Send Sketch
+              </button>
+              <button
+                onClick={() => toggleCompare(selectedDesign)}
+                className="flex-1 px-6 py-3 border border-red-700 hover:bg-red-700/20 font-bold rounded transition"
+              >
+                {compare.find((d) => d.id === selectedDesign.id) ? "✓ In Compare" : "Add Compare"}
+              </button>
+            </div>
           </div>
         </div>
       )}
