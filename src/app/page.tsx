@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShoppingBag, Zap, Trophy, X } from "lucide-react";
+import { DesignMockup } from "@/components/DesignMockup";
 
 const designs = {
   "Women's Swimwear": [
@@ -124,42 +125,50 @@ export default function Home() {
           {designs[activeCategory as keyof typeof designs].map((design: any) => (
             <div
               key={design.id}
-              className={`p-6 rounded border-2 cursor-pointer transition relative ${
+              className={`rounded border-2 cursor-pointer transition relative overflow-hidden ${
                 design.hero
                   ? "border-red-700 bg-red-900/20 hover:bg-red-900/30"
                   : "border-gray-700 bg-gray-900 hover:border-red-700/50"
               }`}
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <h3 className="font-black text-lg">{design.name}</h3>
-                  <p className="text-xs text-gray-500">{design.id}</p>
+              {/* Design Mockup */}
+              <div className="w-full h-64 border-b border-gray-700">
+                <DesignMockup id={design.id} name={design.name} />
+              </div>
+
+              {/* Design Info */}
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-black text-lg">{design.name}</h3>
+                    <p className="text-xs text-gray-500">{design.id}</p>
+                  </div>
+                  {design.hero && <Trophy className="w-5 h-5 text-red-500 ml-2 flex-shrink-0" />}
                 </div>
-                {design.hero && <Trophy className="w-5 h-5 text-red-500 ml-2 flex-shrink-0" />}
+
+                <p className="text-sm text-gray-300 mb-4 line-clamp-2">{design.desc}</p>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedDesign(design)}
+                    className="flex-1 px-3 py-2 bg-red-700 hover:bg-red-800 text-sm font-bold rounded transition"
+                  >
+                    View Details
+                  </button>
+                  <button
+                    onClick={() => toggleCompare(design)}
+                    className={`flex-1 px-3 py-2 text-sm font-bold rounded transition ${
+                      compare.find((d) => d.id === design.id)
+                        ? "bg-gray-700 hover:bg-gray-600 text-white"
+                        : "border border-gray-700 hover:border-red-700 text-gray-300"
+                    }`}
+                  >
+                    {compare.find((d) => d.id === design.id) ? "✓" : "+"}
+                  </button>
+                </div>
+
+                <p className="font-bold text-red-500 text-sm mt-4">{design.price}</p>
               </div>
-
-              <p className="text-sm text-gray-300 mb-4 line-clamp-2">{design.desc}</p>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setSelectedDesign(design)}
-                  className="flex-1 px-3 py-2 bg-red-700 hover:bg-red-800 text-sm font-bold rounded transition"
-                >
-                  View Details
-                </button>
-                <button
-                  onClick={() => toggleCompare(design)}
-                  className={`flex-1 px-3 py-2 text-sm font-bold rounded transition ${
-                    compare.find((d) => d.id === design.id)
-                      ? "bg-gray-700 hover:bg-gray-600 text-white"
-                      : "border border-gray-700 hover:border-red-700 text-gray-300"
-                  }`}
-                >
-                  {compare.find((d) => d.id === design.id) ? "✓" : "+"}
-                </button>
-              </div>
-
-              <p className="font-bold text-red-500 text-sm mt-4">{design.price}</p>
             </div>
           ))}
         </div>
